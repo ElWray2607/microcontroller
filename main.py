@@ -1,6 +1,7 @@
 import asyncio
 
 from controller.BuzzerModuleController import BuzzerModuleController
+from controller.DHT11Controller import DHT11Controller
 from controller.DoorController import DoorController
 from controller.GasSensorController import GasSensorController
 from controller.MotorModuleController import MotorModuleController
@@ -40,7 +41,9 @@ async def main():
     window_controller = WindowController(mqtt_manager, 13)
     door_controller = DoorController(mqtt_manager, 5)
     gas_sensor = GasSensorController(mqtt_manager, 23)
+    dht11_controller = DHT11Controller(mqtt_manager, 17)
 
     asyncio.create_task(gas_sensor.run())
+    asyncio.create_task(dht11_controller.run())
 
 asyncio.run(main())
