@@ -1,5 +1,6 @@
 import asyncio
 
+from controller.RGBController import RGBController
 from util.networking import NetworkManager, MQTTManager
 
 WIFI_SSID = "Schueler-Mobil"
@@ -28,6 +29,7 @@ async def main():
     network_manager = await init_wifi()
     mqtt_manager = await init_mqtt()
 
+    rgb_controller = RGBController(mqtt_manager, 26)
 
     while True:
         await asyncio.sleep(1)
