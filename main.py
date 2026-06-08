@@ -1,8 +1,10 @@
 import asyncio
 
 from controller.BuzzerModuleController import BuzzerModuleController
+from controller.DoorController import DoorController
 from controller.MotorModuleController import MotorModuleController
 from controller.RGBController import RGBController
+from controller.WindowController import WindowController
 from util.networking import NetworkManager, MQTTManager
 
 WIFI_SSID = "Schueler-Mobil"
@@ -34,5 +36,7 @@ async def main():
     rgb_controller = RGBController(mqtt_manager, 26)
     buzzer_controller = BuzzerModuleController(mqtt_manager, 25)
     fan_controller = MotorModuleController(mqtt_manager, inm_pin_id=18, inp_pin_id=19)
+    window_controller = WindowController(mqtt_manager, 13)
+    door_controller = DoorController(mqtt_manager, 5)
 
 asyncio.run(main())
