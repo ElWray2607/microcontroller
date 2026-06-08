@@ -5,6 +5,7 @@ from controller.DHT11Controller import DHT11Controller
 from controller.DoorController import DoorController
 from controller.GasSensorController import GasSensorController
 from controller.MotorModuleController import MotorModuleController
+from controller.PIRSensorController import PIRSensorController
 from controller.RGBController import RGBController
 from controller.WindowController import WindowController
 from util.networking import NetworkManager, MQTTManager
@@ -42,8 +43,10 @@ async def main():
     door_controller = DoorController(mqtt_manager, 5)
     gas_sensor = GasSensorController(mqtt_manager, 23)
     dht11_controller = DHT11Controller(mqtt_manager, 17)
+    motion_controller = PIRSensorController(mqtt_manager, 14)
 
     asyncio.create_task(gas_sensor.run())
     asyncio.create_task(dht11_controller.run())
+    asyncio.create_task(motion_controller.run())
 
 asyncio.run(main())
