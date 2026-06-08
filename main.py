@@ -1,6 +1,7 @@
 import asyncio
 
 from controller.BuzzerModuleController import BuzzerModuleController
+from controller.MotorModuleController import MotorModuleController
 from controller.RGBController import RGBController
 from util.networking import NetworkManager, MQTTManager
 
@@ -32,5 +33,5 @@ async def main():
 
     rgb_controller = RGBController(mqtt_manager, 26)
     buzzer_controller = BuzzerModuleController(mqtt_manager, 25)
-
+    fan_controller = MotorModuleController(mqtt_manager, inm_pin_id=18, inp_pin_id=19)
 asyncio.run(main())
