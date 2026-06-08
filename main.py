@@ -1,5 +1,6 @@
 import asyncio
 
+from controller.BuzzerModuleController import BuzzerModuleController
 from controller.RGBController import RGBController
 from util.networking import NetworkManager, MQTTManager
 
@@ -30,6 +31,7 @@ async def main():
     mqtt_manager = await init_mqtt()
 
     rgb_controller = RGBController(mqtt_manager, 26)
+    buzzer_controller = BuzzerModuleController(mqtt_manager, 25)
 
     while True:
         await asyncio.sleep(1)
