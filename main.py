@@ -4,6 +4,7 @@ from controller.BuzzerModuleController import BuzzerModuleController
 from controller.DHT11Controller import DHT11Controller
 from controller.DoorController import DoorController
 from controller.GasSensorController import GasSensorController
+from controller.LCDController import LCDController
 from controller.MotorModuleController import MotorModuleController
 from controller.PIRSensorController import PIRSensorController
 from controller.RGBController import RGBController
@@ -44,6 +45,7 @@ async def main():
     gas_sensor = GasSensorController(mqtt_manager, 23)
     dht11_controller = DHT11Controller(mqtt_manager, 17)
     motion_controller = PIRSensorController(mqtt_manager, 14)
+    lcd_controller = LCDController(mqtt_manager)
 
     asyncio.create_task(gas_sensor.run())
     asyncio.create_task(dht11_controller.run())
