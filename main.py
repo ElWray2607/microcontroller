@@ -6,6 +6,7 @@ from controller.DHT11Controller import DHT11Controller
 from controller.DoorController import DoorController
 from controller.GasSensorController import GasSensorController
 from controller.LCDController import LCDController
+from controller.LEDController import LEDController
 from controller.MotorModuleController import MotorModuleController
 from controller.PIRSensorController import PIRSensorController
 from controller.RGBController import RGBController
@@ -46,6 +47,7 @@ async def main():
     gas_sensor = GasSensorController(mqtt_manager, 23)
     dht11_controller = DHT11Controller(mqtt_manager, 17)
     motion_controller = PIRSensorController(mqtt_manager, 14)
+    led_controller = LEDController(mqtt_manager, 12)
     lcd_controller = LCDController(mqtt_manager)
     button_left_controller = ButtonController(16, "left", mqtt_manager)
     button_right_controller = ButtonController(27, "right", mqtt_manager)
