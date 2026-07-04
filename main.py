@@ -1,5 +1,6 @@
 import asyncio
 
+from controller.ButtonController import ButtonController
 from controller.BuzzerModuleController import BuzzerModuleController
 from controller.DHT11Controller import DHT11Controller
 from controller.DoorController import DoorController
@@ -46,10 +47,14 @@ async def main():
     dht11_controller = DHT11Controller(mqtt_manager, 17)
     motion_controller = PIRSensorController(mqtt_manager, 14)
     lcd_controller = LCDController(mqtt_manager)
+    button_left_controller = ButtonController(16, "left", mqtt_manager)
+    button_right_controller = ButtonController(27, "right", mqtt_manager)
 
     asyncio.create_task(gas_sensor.run())
     asyncio.create_task(dht11_controller.run())
     asyncio.create_task(motion_controller.run())
+    asyncio.create_task(button_left_controller.run())
+    asyncio.create_task(button_right_controller.run())
 
     while True:
         await asyncio.sleep(1)
