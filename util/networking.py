@@ -15,38 +15,42 @@ class NetworkManager:
         """
         Connect to the WiFi network.
         """
-        print("Resetting WiFi...")
+        try:
+            print("Resetting WiFi...")
 
-        self.wifi.active(True)
-        self.wifi.disconnect()
-        await asyncio.sleep(2)
-
-        self.wifi.active(False)
-        await asyncio.sleep(2)
-
-        self.wifi.active(True)
-        await asyncio.sleep(2)
-
-        if self.wifi.isconnected():
+            self.wifi.active(True)
             self.wifi.disconnect()
-            await asyncio.sleep(1)
+            await asyncio.sleep(2)
 
-        print("Connecting to WiFi:", self.ssid)
-        self.wifi.connect(self.ssid, self.password)
+            self.wifi.active(False)
+            await asyncio.sleep(2)
 
-        timeout = self.timeout
-        while not self.wifi.isconnected() and timeout > 0:
-            print("WiFi status:", self.wifi.status())
-            await asyncio.sleep(1)
-            timeout -= 1
+            self.wifi.active(True)
+            await asyncio.sleep(2)
 
-        if self.wifi.isconnected():
-            print("WiFi connected")
-            print("WiFi config:", self.wifi.ifconfig())
-            return
+            if self.wifi.isconnected():
+                self.wifi.disconnect()
+                await asyncio.sleep(1)
 
-        print("Final WiFi status:", self.wifi.status())
-        raise RuntimeError("Failed to connect to WiFi")
+            print("Connecting to WiFi:", self.ssid)
+            self.wifi.connect(self.ssid, self.password)
+
+            timeout = self.timeout
+            while not self.wifi.isconnected() and timeout > 0:
+                print("WiFi status:", self.wifi.status())
+                await asyncio.sleep(1)
+                timeout -= 1
+
+            if self.wifi.isconnected():
+                print("WiFi connected")
+                print("WiFi config:", self.wifi.ifconfig())
+                return
+
+            print("Final WiFi status:", self.wifi.status())
+            raise RuntimeError("Failed to connect to WiFi: Timeout reached")
+        except Exception as e:
+            print(f"WiFi connection error: {e}")
+            raise e
 
     async def print(self):
         print("WiFi Config:")
@@ -109,11 +113,16 @@ class MQTTManager:
         Connect to the MQTT broker.
         :return:
         """
-        self.client.set_callback(self._handle_message)
-        self.client.connect()
-        self.connected = True
-        self.client.subscribe(b"#")
-        print("MQTT connected")
+        try:
+            self.client.set_callback(self._handle_message)
+            self.client.connect()
+            self.connected = True
+            self.client.subscribe(b"#")
+            print("MQTT connected")
+        except Exception as e:
+            self.connected = False
+            print(f"MQTT connection error: {e}")
+            raise e
 
     def subscribe(self, topic, callback):
         """
@@ -150,6 +159,7 @@ class MQTTManager:
                     self.client.check_msg()
                 except OSError as error:
                     print("MQTT listen error:", error)
+                    raise error
 
             await asyncio.sleep_ms(delay_ms)
 
@@ -160,8 +170,12 @@ class MQTTManager:
         :param topic: The topic to publish the message to.
         :param message: The message to be sent to the specified topic.
         """
+        if not self.connected:
+            print(f"Cannot publish to {topic}: Not connected to MQTT")
+            return
+
         if message is None:
-            payload = None
+            payload = b""
 
         elif isinstance(message, str):
             payload = message.encode()
@@ -189,7 +203,11 @@ class MQTTManager:
 
         print("Publishing to topic:", topic, "with payload:", payload)
 
-        self.client.publish(topic, payload)
+        try:
+            self.client.publish(topic, payload)
+        except Exception as e:
+            print(f"MQTT publish error on topic {topic}: {e}")
+            raise e
 
     def stop(self):
         """
